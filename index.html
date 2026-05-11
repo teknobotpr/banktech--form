@@ -52,10 +52,11 @@
     height: 1056px;
     margin: 0 auto;
     background: #fff;
-    padding: 32px 48px 38px;
+    padding: 32px 72px 38px 60px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   /* === HEADER === */
@@ -137,6 +138,7 @@
     grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
     margin-bottom: 0;
+    width: 100%;
   }
   .row3 .field label {
     font-size: 8pt;
@@ -144,9 +146,15 @@
   .row3 .field input {
     font-size: 9pt;
     min-width: 0;
+    width: 100%;
   }
   .row3 .field {
     min-width: 0;
+    overflow: hidden;
+  }
+  .row3 .col {
+    min-width: 0;
+    overflow: hidden;
   }
   .col { display: flex; flex-direction: column; gap: 0; }
 
@@ -319,7 +327,7 @@
   .footer {
     position: absolute;
     bottom: 14px;
-    left: 48px;
+    left: 60px;
     border: 1px solid var(--line);
     padding: 2px 6px;
     font-size: 7.5pt;
