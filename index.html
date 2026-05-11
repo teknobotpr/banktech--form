@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BankTech — Installation/Support Quality Control Sheet</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #F39200;
+    --ink: #1a1a1a;
+    --line: #000;
+  }
+  body {
+    font-family: "Calibri", "Open Sans", -apple-system, "Segoe UI", sans-serif;
+    background: #e5e7eb;
+    padding: 16px;
+    color: var(--ink);
+    font-size: 11pt;
+  }
+  .toolbar {
+    max-width: 850px;
+    margin: 0 auto 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .toolbar button {
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s;
+    font-family: inherit;
+  }
+  .toolbar button:hover { transform: translateY(-1px); }
+  .btn-pdf { background: var(--orange); color: #fff; }
+  .btn-print { background: #374151; color: #fff; }
+  .btn-clear { background: #dc2626; color: #fff; }
+  .btn-save { background: #059669; color: #fff; }
+  .btn-load { background: #2563eb; color: #fff; }
+
+  /* US Letter ratio: 8.5x11 in. At 96dpi that's 816x1056. We use 816px width. */
+  .sheet {
+    width: 816px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 70px 75px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    position: relative;
+    min-height: 1056px;
+  }
+
+  /* === HEADER === */
+  .hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-icon {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .brand-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .brand-text {
+    line-height: 1.05;
+  }
+  .brand-name {
+    font-size: 32pt;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    color: #3C3C3C;
+    line-height: 0.9;
+  }
+  .brand-tag {
+    font-style: italic;
+    font-size: 9pt;
+    color: #555;
+    margin-top: 3px;
+    margin-left: 2px;
+  }
+  .addr {
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    text-align: left;
+    color: var(--ink);
+  }
+
+  /* === TITLE === */
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    margin: 38px 0 14px;
+  }
+  .title-bar {
+    width: 3px;
+    background: var(--orange);
+    align-self: stretch;
+    margin-right: 10px;
+  }
+  .title {
+    font-style: italic;
+    font-weight: 700;
+    font-size: 13.5pt;
+    letter-spacing: 0.3px;
+  }
+
+  /* === PURPOSE === */
+  .purpose {
+    font-size: 10pt;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 22px;
+    text-align: left;
+  }
+
+  /* === SECTION TITLES === */
+  .sec-title {
+    font-weight: 700;
+    font-size: 11pt;
+    margin: 14px 0 6px;
+  }
+  .sec-sub {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+    font-size: 10pt;
+  }
+
+  /* === FIELD ROWS === */
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 0;
+  }
+  .row3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 0;
+  }
+  .row3 .field label {
+    font-size: 9.5pt;
+  }
+  .row3 .field input {
+    font-size: 10pt;
+    min-width: 0;
+  }
+  .row3 .field {
+    min-width: 0;
+  }
+  .col { display: flex; flex-direction: column; gap: 0; }
+
+  .field {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    padding: 5px 0 3px;
+    border-bottom: 1px solid var(--line);
+    min-height: 28px;
+    min-width: 0;
+  }
+  .field label {
+    font-weight: 700;
+    font-size: 10.5pt;
+    white-space: nowrap;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .field input[type="text"], .field input[type="date"] {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    font-size: 11pt;
+    padding: 1px 2px;
+    background: transparent;
+    font-family: inherit;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .field input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  }
+  .field input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.35;
+    cursor: pointer;
+  }
+  .field input:focus { background: #fffbe6; }
+
+  /* === EQUIPMENT CHECKBOXES === */
+  .equip-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0 2px 30px;
+    border-bottom: 1px solid var(--line);
+    min-height: 26px;
+  }
+  .checkbox {
+    width: 13px;
+    height: 13px;
+    border: 1px solid var(--line);
+    flex-shrink: 0;
+    cursor: pointer;
+    background: #fff;
+    position: relative;
+    display: inline-block;
+  }
+  .checkbox.checked::after {
+    content: "✕";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .equip-row label {
+    font-weight: 700;
+    font-size: 10.5pt;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .equip-row input[type="text"] {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    font-size: 11pt;
+    padding: 1px 2px;
+    background: transparent;
+    font-family: inherit;
+    color: var(--ink);
+  }
+  .equip-row input:focus { background: #fffbe6; }
+
+  /* === NOTES === */
+  .notes-lines {
+    margin-top: 4px;
+  }
+  .notes-line {
+    border-bottom: 1px solid var(--line);
+    min-height: 24px;
+    padding: 2px 0;
+  }
+  .notes-line input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    font-family: inherit;
+    font-size: 11pt;
+    background: transparent;
+    padding: 1px 2px;
+  }
+  .notes-line input:focus { background: #fffbe6; }
+
+  /* === AGREEMENT === */
+  .agreement {
+    font-style: italic;
+    font-weight: 700;
+    font-size: 10.5pt;
+    margin: 24px 0 16px;
+    padding-left: 22px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .agreement::before {
+    content: "•";
+    position: absolute;
+    left: 6px;
+    top: 0;
+    font-size: 14pt;
+    line-height: 1.1;
+  }
+
+  /* === SIGNATURE BLOCK === */
+  .sigblock {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 6px;
+  }
+  .sig-col .field { border-bottom: 1px solid var(--line); }
+
+  .sig-pad-label {
+    font-weight: 700;
+    font-size: 10.5pt;
+    margin-top: 8px;
+  }
+  .sig-pad-wrap {
+    border-bottom: 1px solid var(--line);
+    height: 70px;
+    position: relative;
+    background: transparent;
+  }
+  .sig-pad {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+  }
+  .sig-clear {
+    display: block;
+    margin: 4px 0 0 auto;
+    font-size: 9pt;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 3px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: #555;
+    font-family: inherit;
+  }
+  .sig-clear:hover { background: #f3f4f6; }
+
+  /* === FOOTER === */
+  .footer {
+    position: absolute;
+    bottom: 30px;
+    left: 75px;
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    font-size: 8pt;
+    color: var(--ink);
+  }
+
+  /* PRINT / PDF MODE */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .toolbar { display: none; }
+    .sheet { box-shadow: none; padding: 70px 75px; width: 8.5in; min-height: 11in; }
+    .no-pdf { display: none !important; }
+    .field input:focus, .equip-row input:focus, .notes-line input:focus { background: transparent; }
+    @page { size: letter; margin: 0; }
+  }
+
+  .sheet.pdf-mode .no-pdf { display: none !important; }
+  .sheet.pdf-mode .field input:focus,
+  .sheet.pdf-mode .equip-row input:focus { background: transparent; }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="btn-load" onclick="loadDraft()">📂 Cargar Borrador</button>
+  <button class="btn-save" onclick="saveDraft()">💾 Guardar Borrador</button>
+  <button class="btn-clear" onclick="clearForm()">🗑️ Limpiar Todo</button>
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir</button>
+  <button class="btn-pdf" onclick="downloadPDF()">📄 Descargar PDF</button>
+</div>
+
+<div class="sheet" id="sheet">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="brand">
+      <div class="brand-icon">
+        <!-- Stylized sphere with crescent highlight -->
+        <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="25" cy="25" r="23" fill="#F39200"/>
+          <path d="M 12 14 A 23 23 0 0 1 38 38 A 18 18 0 0 0 12 14 Z" fill="#FAB95F"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">banktech</div>
+        <div class="brand-tag">Join The Revolution.</div>
+      </div>
+    </div>
+    <div class="addr">
+      100 Carr 848 Ste 6<br>
+      Carolina PR 00987<br>
+      787-499-2265
+    </div>
+  </div>
+
+  <!-- TITLE -->
+  <div class="title-wrap">
+    <div class="title-bar"></div>
+    <div class="title">INSTALLATION/SUPPORT QUALITY CONTROL SHEET</div>
+  </div>
+
+  <!-- PURPOSE -->
+  <div class="purpose">
+    The purpose of this document is to supervise, control and document installation and support visit of technicians to maintain quality assurance. The technician MUST completely fill out this form and submit to management for quality purposes. If the work done in the visit does not comply with company policies the technician must submit a written report in the "notes" section of this document detailing all the particular reasons as well as a plan of action with detailed instructions to guide the IT/Programmers through equipment setup.
+  </div>
+
+  <!-- BUSINESS INFO -->
+  <div class="row2">
+    <div class="col">
+      <div class="field"><label>Business Name:</label><input type="text" id="biz_name"></div>
+      <div class="field"><label>Business Owner's Name:</label><input type="text" id="biz_owner"></div>
+      <div class="field"><label>Business Location:</label><input type="text" id="biz_loc"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>RPA:</label><input type="text" id="rpa"></div>
+      <div class="field"><label>MID:</label><input type="text" id="mid"></div>
+      <div class="field"><label>Date:</label><input type="date" id="date"></div>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="sec-title">Equipment: <span class="sec-sub">(List all equipment delivered to merchant location)</span></div>
+  <div class="equip">
+    <div class="equip-row">
+      <span class="checkbox" data-target="eq_clover_chk" onclick="toggleCheck(this)"></span>
+      <input type="checkbox" id="eq_clover_chk" style="display:none">
+      <label onclick="this.previousElementSibling.previousElementSibling.click()">Clover:</label>
+      <input type="text" id="eq_clover">
+    </div>
+    <div class="equip-row">
+      <span class="checkbox" data-target="eq_verifone_chk" onclick="toggleCheck(this)"></span>
+      <input type="checkbox" id="eq_verifone_chk" style="display:none">
+      <label onclick="this.previousElementSibling.previousElementSibling.click()">Verifone:</label>
+      <input type="text" id="eq_verifone">
+    </div>
+    <div class="equip-row">
+      <span class="checkbox" data-target="eq_dejavoo_chk" onclick="toggleCheck(this)"></span>
+      <input type="checkbox" id="eq_dejavoo_chk" style="display:none">
+      <label onclick="this.previousElementSibling.previousElementSibling.click()">DeJavoo:</label>
+      <input type="text" id="eq_dejavoo">
+    </div>
+    <div class="equip-row">
+      <span class="checkbox" data-target="eq_fd_chk" onclick="toggleCheck(this)"></span>
+      <input type="checkbox" id="eq_fd_chk" style="display:none">
+      <label onclick="this.previousElementSibling.previousElementSibling.click()">FD Series:</label>
+      <input type="text" id="eq_fd">
+    </div>
+    <div class="equip-row">
+      <span class="checkbox" data-target="eq_bt_chk" onclick="toggleCheck(this)"></span>
+      <input type="checkbox" id="eq_bt_chk" style="display:none">
+      <label onclick="this.previousElementSibling.previousElementSibling.click()">Banktech POS:</label>
+      <input type="text" id="eq_bt">
+    </div>
+    <div class="equip-row">
+      <span class="checkbox" data-target="eq_acc_chk" onclick="toggleCheck(this)"></span>
+      <input type="checkbox" id="eq_acc_chk" style="display:none">
+      <label onclick="this.previousElementSibling.previousElementSibling.click()">Accessories/Add Ons:</label>
+      <input type="text" id="eq_acc">
+    </div>
+  </div>
+
+  <!-- EQUIPMENT INFORMATION -->
+  <div class="sec-title" style="margin-top:16px">Equipment Information: <span class="sec-sub">(Please fill out with detailed information)</span></div>
+  <div class="row2">
+    <div class="col">
+      <div class="field"><label>Serial Number:</label><input type="text" id="serial"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>Network Info/SIM:</label><input type="text" id="network"></div>
+    </div>
+  </div>
+  <div class="row3">
+    <div class="col">
+      <div class="field"><label>DB/CD, CTLS, EMV Tested?:</label><input type="text" id="tested"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>Paper Delivered?:</label><input type="text" id="paper"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>Info receipt correct?:</label><input type="text" id="receipt"></div>
+    </div>
+  </div>
+  <div class="row3">
+    <div class="col">
+      <div class="field"><label>Offline Payments off?:</label><input type="text" id="offline"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>BT user created?:</label><input type="text" id="btuser"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>Trained merchant?:</label><input type="text" id="trained"></div>
+    </div>
+  </div>
+  <div class="row3">
+    <div class="col">
+      <div class="field"><label>Has inventory/menu?:</label><input type="text" id="hasinv"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>Uploaded to acct?:</label><input type="text" id="uploaded"></div>
+    </div>
+    <div class="col">
+      <div class="field"><label>IVU?:</label><input type="text" id="ivu"></div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="sec-title" style="margin-top:16px">Notes:</div>
+  <div class="notes-lines">
+    <div class="notes-line"><input type="text" id="note1"></div>
+    <div class="notes-line"><input type="text" id="note2"></div>
+    <div class="notes-line"><input type="text" id="note3"></div>
+    <div class="notes-line"><input type="text" id="note4"></div>
+  </div>
+
+  <!-- AGREEMENT -->
+  <div class="agreement">
+    By signing below all parties agree that installation/support was successfully completed, customer has no questions or doubts about the functionality of the equipment or services.
+  </div>
+
+  <!-- SIGNATURE BLOCK -->
+  <div class="sigblock">
+    <div class="sig-col">
+      <div class="field"><label>Name:</label><input type="text" id="cust_name"></div>
+      <div class="sig-pad-label">Signature:</div>
+      <div class="sig-pad-wrap">
+        <canvas class="sig-pad" id="cust_sig"></canvas>
+      </div>
+      <button class="sig-clear no-pdf" onclick="clearSig('cust_sig')">Borrar firma</button>
+      <div class="field"><label>Position:</label><input type="text" id="cust_pos"></div>
+    </div>
+    <div class="sig-col">
+      <div class="field"><label>Technician:</label><input type="text" id="tech_name" value="Reymil Quiñones Figueroa"></div>
+      <div class="sig-pad-label">Signature:</div>
+      <div class="sig-pad-wrap">
+        <canvas class="sig-pad" id="tech_sig"></canvas>
+      </div>
+      <button class="sig-clear no-pdf" onclick="clearSig('tech_sig')">Borrar firma</button>
+      <div class="field"><label>Date:</label><input type="date" id="tech_date"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">BankTech PR Rev. 05/19</div>
+
+</div>
+
+<script>
+  // === Signature pads ===
+  const sigPads = {};
+  function initSigPads() {
+    document.querySelectorAll('.sig-pad').forEach(canvas => {
+      const wrap = canvas.parentElement;
+      canvas.width = wrap.clientWidth;
+      canvas.height = wrap.clientHeight;
+      sigPads[canvas.id] = new SignaturePad(canvas, {
+        penColor: '#000',
+        backgroundColor: 'rgba(0,0,0,0)',
+        minWidth: 0.8,
+        maxWidth: 2.0
+      });
+    });
+  }
+  function clearSig(id) {
+    sigPads[id] && sigPads[id].clear();
+  }
+  window.addEventListener('load', initSigPads);
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.sig-pad').forEach(canvas => {
+      const data = sigPads[canvas.id] ? sigPads[canvas.id].toData() : null;
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+      if (data) sigPads[canvas.id].fromData(data);
+    });
+  });
+
+  // === Checkbox toggle (custom UI checkbox) ===
+  function toggleCheck(span) {
+    span.classList.toggle('checked');
+    const id = span.getAttribute('data-target');
+    const hidden = document.getElementById(id);
+    if (hidden) hidden.checked = span.classList.contains('checked');
+  }
+
+  // === Auto-fill today's date ===
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
+  document.getElementById('tech_date').value = today;
+
+  // === Save/Load draft ===
+  function gatherData() {
+    const data = {};
+    document.querySelectorAll('input, textarea').forEach(el => {
+      if (el.type === 'checkbox') data[el.id] = el.checked;
+      else data[el.id] = el.value;
+    });
+    data._sigs = {};
+    Object.keys(sigPads).forEach(id => {
+      data._sigs[id] = sigPads[id].toDataURL();
+    });
+    return data;
+  }
+  function restoreData(data) {
+    Object.keys(data).forEach(id => {
+      if (id === '_sigs') return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox') {
+        el.checked = data[id];
+        // sync the visible checkbox
+        const span = document.querySelector(`.checkbox[data-target="${id}"]`);
+        if (span) span.classList.toggle('checked', !!data[id]);
+      } else el.value = data[id] || '';
+    });
+    if (data._sigs) {
+      Object.keys(data._sigs).forEach(id => {
+        if (sigPads[id] && data._sigs[id]) sigPads[id].fromDataURL(data._sigs[id]);
+      });
+    }
+  }
+  function saveDraft() {
+    localStorage.setItem('banktech_form_draft', JSON.stringify(gatherData()));
+    alert('💾 Borrador guardado en este navegador.');
+  }
+  function loadDraft() {
+    const saved = localStorage.getItem('banktech_form_draft');
+    if (!saved) { alert('No hay borrador guardado.'); return; }
+    if (confirm('¿Cargar borrador guardado? Esto reemplaza los datos actuales.')) {
+      restoreData(JSON.parse(saved));
+    }
+  }
+  function clearForm() {
+    if (!confirm('¿Limpiar todo el formulario?')) return;
+    document.querySelectorAll('input, textarea').forEach(el => {
+      if (el.type === 'checkbox') el.checked = false;
+      else if (el.id !== 'tech_name') el.value = '';
+    });
+    document.querySelectorAll('.checkbox').forEach(c => c.classList.remove('checked'));
+    Object.values(sigPads).forEach(pad => pad.clear());
+    document.getElementById('date').value = today;
+    document.getElementById('tech_date').value = today;
+  }
+
+  // === PDF generation (pixel-perfect via canvas) ===
+  async function downloadPDF() {
+    const sheet = document.getElementById('sheet');
+    sheet.classList.add('pdf-mode');
+
+    const bizName = (document.getElementById('biz_name').value || 'BankTech-QC')
+      .trim().replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, '_');
+    const dateStr = document.getElementById('date').value || today;
+    const filename = `${bizName}_${dateStr}.pdf`;
+
+    try {
+      const canvas = await html2canvas(sheet, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#fff',
+        windowWidth: sheet.scrollWidth,
+        height: sheet.scrollHeight,
+        windowHeight: sheet.scrollHeight
+      });
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'pt', 'letter');
+      const pageW = pdf.internal.pageSize.getWidth();   // 612pt
+      const pageH = pdf.internal.pageSize.getHeight();  // 792pt
+
+      const imgW = pageW;
+      const imgH = (canvas.height * imgW) / canvas.width;
+
+      if (imgH <= pageH) {
+        pdf.addImage(imgData, 'JPEG', 0, 0, imgW, imgH);
+      } else {
+        // multi-page
+        let position = 0;
+        let heightLeft = imgH;
+        pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+        heightLeft -= pageH;
+        while (heightLeft > 0) {
+          position -= pageH;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, imgW, imgH);
+          heightLeft -= pageH;
+        }
+      }
+      pdf.save(filename);
+    } catch (err) {
+      alert('Error generando PDF: ' + err.message);
+      console.error(err);
+    } finally {
+      sheet.classList.remove('pdf-mode');
+    }
+  }
+</script>
+
+</body>
+</html>
