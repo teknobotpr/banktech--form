@@ -19,7 +19,7 @@
     background: #e5e7eb;
     padding: 16px;
     color: var(--ink);
-    font-size: 11pt;
+    font-size: 9.5pt;
   }
   .toolbar {
     max-width: 850px;
@@ -49,12 +49,13 @@
   /* US Letter ratio: 8.5x11 in. At 96dpi that's 816x1056. We use 816px width. */
   .sheet {
     width: 816px;
+    height: 1056px;
     margin: 0 auto;
     background: #fff;
-    padding: 70px 75px;
+    padding: 32px 48px 38px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     position: relative;
-    min-height: 1056px;
+    overflow: hidden;
   }
 
   /* === HEADER === */
@@ -62,16 +63,16 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
   .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
   .brand-icon {
-    width: 50px;
-    height: 50px;
+    width: 38px;
+    height: 38px;
     position: relative;
     flex-shrink: 0;
   }
@@ -84,24 +85,24 @@
     line-height: 1.05;
   }
   .brand-name {
-    font-size: 32pt;
+    font-size: 24pt;
     font-weight: 800;
-    letter-spacing: -1.5px;
+    letter-spacing: -1.2px;
     color: #3C3C3C;
     line-height: 0.9;
   }
   .brand-tag {
     font-style: italic;
-    font-size: 9pt;
+    font-size: 8pt;
     color: #555;
-    margin-top: 3px;
-    margin-left: 2px;
+    margin-top: 2px;
+    margin-left: 1px;
   }
   .addr {
     border: 1px solid var(--line);
-    padding: 8px 14px;
-    font-size: 10.5pt;
-    line-height: 1.55;
+    padding: 5px 10px;
+    font-size: 9pt;
+    line-height: 1.4;
     text-align: left;
     color: var(--ink);
   }
@@ -110,61 +111,61 @@
   .title-wrap {
     display: flex;
     align-items: center;
-    margin: 38px 0 14px;
+    margin: 16px 0 6px;
   }
   .title-bar {
     width: 3px;
     background: var(--orange);
     align-self: stretch;
-    margin-right: 10px;
+    margin-right: 8px;
   }
   .title {
     font-style: italic;
     font-weight: 700;
-    font-size: 13.5pt;
-    letter-spacing: 0.3px;
+    font-size: 11.5pt;
+    letter-spacing: 0.2px;
   }
 
   /* === PURPOSE === */
   .purpose {
-    font-size: 10pt;
-    line-height: 1.45;
+    font-size: 8.5pt;
+    line-height: 1.35;
     color: var(--ink);
-    margin-bottom: 22px;
+    margin-bottom: 10px;
     text-align: left;
   }
 
   /* === SECTION TITLES === */
   .sec-title {
     font-weight: 700;
-    font-size: 11pt;
-    margin: 14px 0 6px;
+    font-size: 9.5pt;
+    margin: 8px 0 2px;
   }
   .sec-sub {
     font-weight: 400;
     font-style: italic;
     color: var(--ink);
-    font-size: 10pt;
+    font-size: 8.5pt;
   }
 
   /* === FIELD ROWS === */
   .row2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
+    gap: 30px;
     margin-bottom: 0;
   }
   .row3 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
+    gap: 12px;
     margin-bottom: 0;
   }
   .row3 .field label {
-    font-size: 9.5pt;
+    font-size: 8pt;
   }
   .row3 .field input {
-    font-size: 10pt;
+    font-size: 9pt;
     min-width: 0;
   }
   .row3 .field {
@@ -175,15 +176,15 @@
   .field {
     display: flex;
     align-items: flex-end;
-    gap: 6px;
-    padding: 5px 0 3px;
+    gap: 5px;
+    padding: 3px 0 2px;
     border-bottom: 1px solid var(--line);
-    min-height: 28px;
+    min-height: 20px;
     min-width: 0;
   }
   .field label {
     font-weight: 700;
-    font-size: 10.5pt;
+    font-size: 9pt;
     white-space: nowrap;
     line-height: 1;
     flex-shrink: 0;
@@ -192,7 +193,7 @@
     flex: 1;
     border: 0;
     outline: 0;
-    font-size: 11pt;
+    font-size: 9.5pt;
     padding: 1px 2px;
     background: transparent;
     font-family: inherit;
@@ -214,14 +215,14 @@
   .equip-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 0 2px 30px;
+    gap: 6px;
+    padding: 2px 0 1px 22px;
     border-bottom: 1px solid var(--line);
-    min-height: 26px;
+    min-height: 18px;
   }
   .checkbox {
-    width: 13px;
-    height: 13px;
+    width: 11px;
+    height: 11px;
     border: 1px solid var(--line);
     flex-shrink: 0;
     cursor: pointer;
@@ -235,14 +236,14 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -55%);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--ink);
     line-height: 1;
   }
   .equip-row label {
     font-weight: 700;
-    font-size: 10.5pt;
+    font-size: 9pt;
     white-space: nowrap;
     cursor: pointer;
   }
@@ -250,7 +251,7 @@
     flex: 1;
     border: 0;
     outline: 0;
-    font-size: 11pt;
+    font-size: 9.5pt;
     padding: 1px 2px;
     background: transparent;
     font-family: inherit;
@@ -260,19 +261,19 @@
 
   /* === NOTES === */
   .notes-lines {
-    margin-top: 4px;
+    margin-top: 2px;
   }
   .notes-line {
     border-bottom: 1px solid var(--line);
-    min-height: 24px;
-    padding: 2px 0;
+    min-height: 18px;
+    padding: 1px 0;
   }
   .notes-line input {
     width: 100%;
     border: 0;
     outline: 0;
     font-family: inherit;
-    font-size: 11pt;
+    font-size: 9.5pt;
     background: transparent;
     padding: 1px 2px;
   }
@@ -282,18 +283,18 @@
   .agreement {
     font-style: italic;
     font-weight: 700;
-    font-size: 10.5pt;
-    margin: 24px 0 16px;
-    padding-left: 22px;
+    font-size: 9pt;
+    margin: 10px 0 6px;
+    padding-left: 18px;
     position: relative;
-    line-height: 1.4;
+    line-height: 1.35;
   }
   .agreement::before {
     content: "•";
     position: absolute;
-    left: 6px;
+    left: 4px;
     top: 0;
-    font-size: 14pt;
+    font-size: 12pt;
     line-height: 1.1;
   }
 
@@ -301,19 +302,19 @@
   .sigblock {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    margin-top: 6px;
+    gap: 30px;
+    margin-top: 2px;
   }
   .sig-col .field { border-bottom: 1px solid var(--line); }
 
   .sig-pad-label {
     font-weight: 700;
-    font-size: 10.5pt;
-    margin-top: 8px;
+    font-size: 9pt;
+    margin-top: 4px;
   }
   .sig-pad-wrap {
     border-bottom: 1px solid var(--line);
-    height: 70px;
+    height: 42px;
     position: relative;
     background: transparent;
   }
@@ -340,11 +341,11 @@
   /* === FOOTER === */
   .footer {
     position: absolute;
-    bottom: 30px;
-    left: 75px;
+    bottom: 14px;
+    left: 48px;
     border: 1px solid var(--line);
-    padding: 3px 8px;
-    font-size: 8pt;
+    padding: 2px 6px;
+    font-size: 7.5pt;
     color: var(--ink);
   }
 
@@ -352,7 +353,7 @@
   @media print {
     body { background: #fff; padding: 0; }
     .toolbar { display: none; }
-    .sheet { box-shadow: none; padding: 70px 75px; width: 8.5in; min-height: 11in; }
+    .sheet { box-shadow: none; width: 8.5in; height: 11in; }
     .no-pdf { display: none !important; }
     .field input:focus, .equip-row input:focus, .notes-line input:focus { background: transparent; }
     @page { size: letter; margin: 0; }
